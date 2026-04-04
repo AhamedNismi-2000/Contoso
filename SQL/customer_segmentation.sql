@@ -1,0 +1,1 @@
+-- This Sql file Use For Customer Segmentation 
