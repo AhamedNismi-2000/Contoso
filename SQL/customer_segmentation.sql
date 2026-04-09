@@ -41,5 +41,16 @@
                     WHEN Continent='North America' THEN customerkey END ) AS cunstomer_continent 
     FROM customer
     GROUP BY continent 
-                    
 
+   -- Top 5 High Customer Count Countries 
+
+    SELECT
+       countryfull,
+       continent, 
+       COUNT(DISTINCT customerkey) AS distinct_customer
+    FROM Customer 
+    GROUP BY countryfull,continent
+    ORDER BY countryfull DESC
+    LIMIT 5 
+
+  
