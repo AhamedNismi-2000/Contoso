@@ -32,3 +32,14 @@
     ORDER BY order_year;
 
 
+-- Customer By Continent Which Continent Customer Most 
+
+    SELECT 
+    Continent,
+    COUNT(DISTINCT CASE WHEN Continent='Australia' THEN customerkey 
+                    WHEN  Continent='Europe' THEN customerkey 
+                    WHEN Continent='North America' THEN customerkey END ) AS cunstomer_continent 
+    FROM customer
+    GROUP BY continent 
+                    
+
