@@ -86,4 +86,35 @@
   JOIN  Product p 
   ON s.productkey = p.productkey 
   GROUP BY categoryname,gender
+  
+
+
+  -- Product Category Analyse By Age
+
+  SELECT
+      age,
+      COUNT(age) age_count,
+      categoryname
+  FROM Customer c     
+  JOIN Sales s 
+  ON s.customerkey = c.customerkey
+  JOIN  Product p 
+  ON s.productkey = p.productkey 
+  GROUP BY age,categoryname
+  ORDER BY age 
+
+
+-- Analyse By Age and Gender 
+  SELECT
+      age,
+      COUNT(age) age_count,
+      gender,
+      categoryname
+  FROM Customer c     
+  JOIN Sales s 
+  ON s.customerkey = c.customerkey
+  JOIN  Product p 
+  ON s.productkey = p.productkey 
+  GROUP BY age,categoryname,gender
+  ORDER BY age 
 
