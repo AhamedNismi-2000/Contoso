@@ -53,4 +53,37 @@
     ORDER BY countryfull DESC
     LIMIT 5 
 
-  
+
+-- Gender Analysis 
+
+-- Total Male & Female 
+  SELECT
+    gender,
+    COUNT(DISTINCT customerkey) AS gender_count
+  FROM customer 
+  GROUP BY gender
+
+-- How Many Orders Made By Genders  
+  SELECT 
+     gender,
+     COUNT(DISTINCT s.orderkey) AS order_per_gender  
+  FROM customer c 
+  JOIN sales s 
+  ON c.customerkey = s.customerkey
+  GROUP BY gender    
+
+
+-- Which Gender Order What Category of Item
+
+  SELECT 
+    DISTINCT gender,
+    categoryname,
+    COUNT(DISTINCT s.orderkey) AS gender_count
+    
+  FROM Customer c 
+  JOIN Sales s 
+  ON s.customerkey = c.customerkey
+  JOIN  Product p 
+  ON s.productkey = p.productkey 
+  GROUP BY categoryname,gender
+
