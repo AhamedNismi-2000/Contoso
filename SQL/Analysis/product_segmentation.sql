@@ -12,7 +12,7 @@ GROUP BY categoryname
 
 
 -- Most Revenue Product 
- SELECT * FROM Sales 
+ SELECT * FROM Sales  
 
     SELECT 
         p.categoryname,
