@@ -21,3 +21,4 @@ GROUP BY categoryname
     JOIN Sales s
     ON p.productkey = s.productkey 
     GROUP BY p.categoryname
+    ORDER BY net_revenue DESC
