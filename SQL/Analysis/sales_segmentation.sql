@@ -27,6 +27,34 @@
     GROUP BY p.categoryname
 
 
+ -- Revenue Distribution By Tier
 
+   WITH percentile AS (
+      SELECT 
+         PERCENTILE_CONT(0.25) WITHIN GROUP (ORDER BY ROUND((s.quantity * s.unitprice * s.exchangerate), 2)) AS revenue_25_percentile,
+         PERCENTILE_CONT(0.5)  WITHIN GROUP (ORDER BY ROUND((s.quantity * s.unitprice * s.exchangerate), 2)) AS revenue_50_percentile,
+         PERCENTILE_CONT(0.75) WITHIN GROUP (ORDER BY ROUND((s.quantity * s.unitprice * s.exchangerate), 2)) AS revenue_75_percentile
+      FROM Sales s
+      WHERE orderdate BETWEEN '2022-01-01' AND '2024-12-31'
+   )
 
-      
+      SELECT 
+         p.categoryname AS category,
+         CASE 
+            WHEN ROUND((s.quantity * s.unitprice * s.exchangerate), 2) 
+                  <= prc.revenue_25_percentile 
+            THEN 'LOW-Revenue'
+            WHEN ROUND((s.quantity * s.unitprice * s.exchangerate), 2) 
+                  >= prc.revenue_75_percentile 
+            THEN 'HIGH-Revenue'
+            ELSE 'MEDIUM-Revenue'
+         END AS revenue_tier,
+         SUM(ROUND((s.quantity * s.unitprice * s.exchangerate), 2)) AS total_revenue
+      FROM Sales s
+      JOIN Product p
+      ON s.productkey = p.productkey
+      CROSS JOIN percentile prc
+      WHERE s.orderdate BETWEEN '2022-01-01' AND '2024-12-31'
+      GROUP BY 
+         p.categoryname,revenue_tier
+      ORDER BY total_revenue   
