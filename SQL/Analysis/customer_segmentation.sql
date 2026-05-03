@@ -18,6 +18,7 @@
     JOIN Customer c
     ON s.customerkey = c.customerkey
 
+
    
 
    -- Query By Rows 
@@ -42,6 +43,9 @@
     FROM Customer 
     GROUP BY continent 
     ORDER BY continent 
+
+
+    SELECT 
             
    -- Top 5 High Customer Count Countries 
 

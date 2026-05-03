@@ -22,3 +22,5 @@ GROUP BY categoryname
     ON p.productkey = s.productkey 
     GROUP BY p.categoryname
     ORDER BY net_revenue DESC
+
+    
