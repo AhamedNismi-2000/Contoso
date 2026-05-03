@@ -11,37 +11,38 @@
 -- Find the Unique Customer By Year 
 
    SELECT 
-       COUNT(DISTINCT CASE WHEN orderdate BETWEEN '2022-01-01' AND '2022-12-31'THEN c.customerkey END ) AS total_2022_customer, 
-       COUNT(DISTINCT CASE WHEN orderdate BETWEEN '2023-01-01' AND '2023-12-31'THEN c.customerkey END ) AS total_2023_customer,
-       COUNT(DISTINCT CASE WHEN orderdate BETWEEN '2024-01-01' AND '2024-12-31'THEN c.customerkey END ) AS total_2024_customer
-   FROM Customer c
-   JOIN Sales s 
-   ON c.customerkey = s.customerkey
+      COUNT(DISTINCT CASE WHEN s.orderdate BETWEEN '2022-01-01' AND '2022-12-31' THEN c.customerkey END ) AS customer_2022,
+      COUNT(DISTINCT CASE WHEN s.orderdate BETWEEN '2023-01-01' AND '2023-12-31' THEN c.customerkey END ) AS customer_2023,
+      COUNT(DISTINCT CASE WHEN s.orderdate BETWEEN '2024-01-01' AND '2024-12-31' THEN c.customerkey END ) AS customer_2024 
+    FROM Sales s
+    JOIN Customer c
+    ON s.customerkey = c.customerkey
+
    
 
    -- Query By Rows 
-
-    SELECT 
-        EXTRACT(YEAR FROM s.orderdate) AS order_year,
-        COUNT(DISTINCT c.customerkey) AS total_customers
-    FROM Customer c
-    JOIN Sales s 
-        ON c.customerkey = s.customerkey
-    WHERE orderdate BETWEEN '2022-01-01' AND '2024-12-31'
-    GROUP BY EXTRACT(YEAR FROM s.orderdate)
-    ORDER BY order_year;
+    
+      SELECT 
+          EXTRACT(YEAR FROM s.orderdate) AS order_year,
+          COUNT(DISTINCT CASE WHEN s.orderdate BETWEEN '2022-01-01' AND '2024-12-31' THEN c.customerkey END ) AS customer
+      FROM Sales s 
+      JOIN Customer c 
+      ON s.customerkey = c.customerkey 
+      WHERE s.orderdate BETWEEN '2022-01-01' AND '2024-12-31'
+      GROUP BY EXTRACT(YEAR FROM orderdate)    
 
 
 -- Customer By Continent Which Continent Customer Most 
 
     SELECT 
-    Continent,
-    COUNT(DISTINCT CASE WHEN Continent='Australia' THEN customerkey 
-                    WHEN  Continent='Europe' THEN customerkey 
-                    WHEN Continent='North America' THEN customerkey END ) AS cunstomer_continent 
-    FROM customer
+        continent,
+        COUNT(DISTINCT CASE WHEN Continent='Australia' THEN customerkey  
+              WHEN  Continent='Europe' THEN customerkey  
+              WHEN  Continent='North America' THEN customerkey END ) AS customer_continent 
+    FROM Customer 
     GROUP BY continent 
-
+    ORDER BY continent 
+            
    -- Top 5 High Customer Count Countries 
 
     SELECT
@@ -57,13 +58,15 @@
 -- Gender Analysis 
 
 -- Total Male & Female 
+
   SELECT
     gender,
     COUNT(DISTINCT customerkey) AS gender_count
   FROM customer 
   GROUP BY gender
 
--- How Many Orders Made By Genders  
+-- How Many Orders Made By Each Genders  
+
   SELECT 
      gender,
      COUNT(DISTINCT s.orderkey) AS order_per_gender  
@@ -93,13 +96,14 @@
 
   SELECT
       age,
-      COUNT(age) age_count,
+      COUNT(age)  AS customer_count,
+      ROUND(SUM(s.quantity*s.exchangerate*s.unitprice),2) AS net_revenue,
       categoryname
   FROM Customer c     
-  JOIN Sales s 
-  ON s.customerkey = c.customerkey
-  JOIN  Product p 
-  ON s.productkey = p.productkey 
+  JOIN  Sales s 
+  ON  c.customerkey = s.customerkey 
+  JOIN Product p 
+  ON p.productkey = s.productkey
   GROUP BY age,categoryname
   ORDER BY age 
 
@@ -109,6 +113,7 @@
   SELECT
       age,
       COUNT(age) age_count,
+      ROUND(SUM(s.quantity*s.exchangerate*s.unitprice),2) AS net_revenue,
       gender,
       categoryname
   FROM Customer c     
@@ -118,4 +123,5 @@
   ON s.productkey = p.productkey 
   GROUP BY age,categoryname,gender
   ORDER BY age 
+
 
