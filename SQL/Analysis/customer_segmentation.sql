@@ -6,6 +6,22 @@
        COUNT(DISTINCT customerkey) AS total_unique_customer
    FROM Customer    
 
+-- Customer Who Made a Order 
+
+   SELECT 
+       COUNT(DISTINCT customerkey) AS total_active_customer
+   FROM Sales     
+
+
+   -- Find the Total  Customer By Year   Query By Rows 
+
+    SELECT 
+    EXTRACT(YEAR FROM s.orderdate) AS order_year,
+    COUNT(DISTINCT s.customerkey) AS ordered_customers
+    FROM Sales s
+    WHERE s.orderdate BETWEEN '2022-01-01' AND '2024-12-31'
+    GROUP BY EXTRACT(YEAR FROM s.orderdate)
+    ORDER BY order_year DESC;
 
    
 -- Find the Unique Customer By Year 
@@ -19,18 +35,8 @@
     ON s.customerkey = c.customerkey
 
 
-   
+ 
 
-   -- Query By Rows 
-    
-      SELECT 
-          EXTRACT(YEAR FROM s.orderdate) AS order_year,
-          COUNT(DISTINCT CASE WHEN s.orderdate BETWEEN '2022-01-01' AND '2024-12-31' THEN c.customerkey END ) AS customer
-      FROM Sales s 
-      JOIN Customer c 
-      ON s.customerkey = c.customerkey 
-      WHERE s.orderdate BETWEEN '2022-01-01' AND '2024-12-31'
-      GROUP BY EXTRACT(YEAR FROM orderdate)    
 
 
 -- Customer By Continent Which Continent Customer Most 
@@ -127,5 +133,4 @@
   ON s.productkey = p.productkey 
   GROUP BY age,categoryname,gender
   ORDER BY age 
-
 
