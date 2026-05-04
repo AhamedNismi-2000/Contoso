@@ -13,6 +13,21 @@
        ROUND(AVG(CASE WHEN orderdate BETWEEN '2023-01-01' AND '2023-12-31' THEN s.quantity*s.unitprice*s.exchangerate END ),2) AS net_revenue_2023,
        ROUND(AVG(CASE WHEN orderdate BETWEEN '2024-01-01' AND '2024-12-31' THEN s.quantity*s.unitprice*s.exchangerate END ),2) AS net_revenue_2024
     FROM Sales s
+   
+   
+-- Revenue Summary
+
+    SELECT 
+      EXTRACT(YEAR FROM s.orderdate) AS year ,
+      ROUND(SUM(CASE WHEN orderdate BETWEEN '2022-01-01' AND '2024-12-31' THEN s.quantity*s.unitprice*s.exchangerate END ),2) AS net_revenue,
+      ROUND(AVG(CASE WHEN orderdate BETWEEN '2022-01-01' AND '2024-12-31' THEN s.quantity*s.unitprice*s.exchangerate END ),2) AS avg_revenue,
+      ROUND(MIN(CASE WHEN orderdate BETWEEN '2022-01-01' AND '2024-12-31' THEN s.quantity*s.unitprice*s.exchangerate END ),2) AS min_revenue,
+      ROUND(MAX(CASE WHEN orderdate BETWEEN '2022-01-01' AND '2024-12-31' THEN s.quantity*s.unitprice*s.exchangerate END ),2) AS max_revenue
+    FROM Sales s  
+    WHERE orderdate BETWEEN '2022-01-01' AND '2024-12-31' 
+    GROUP BY  EXTRACT(YEAR FROM s.orderdate)
+    ORDER BY year
+
 
  -- Median Sales Each Year By Product Category 
  
