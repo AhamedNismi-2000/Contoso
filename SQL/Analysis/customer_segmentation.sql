@@ -1,9 +1,10 @@
--- This Sql file Use For Customer Segmentation
+-- This Sql file Use For Customer Segmentation+
+
 
 -- Find the Unique Customer 
 
    SELECT 
-       COUNT(DISTINCT customerkey) AS total_unique_customer
+       COUNT(DISTINCT customerkey) AS total_customer
    FROM Customer    
 
 -- Customer Who Made a Order 
@@ -33,9 +34,6 @@
     FROM Sales s
     JOIN Customer c
     ON s.customerkey = c.customerkey
-
-
- 
 
 
 
