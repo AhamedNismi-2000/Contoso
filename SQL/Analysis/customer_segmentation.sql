@@ -132,3 +132,24 @@
   GROUP BY age,categoryname,gender
   ORDER BY age 
 
+-- Customer Who Buy Products to Cotributes Revenue Use for Devide the customer as Gold , Silver , Brownce Custoemer 
+
+  SELECT 
+      s.customerkey,
+      CONCAT(c.givenname, ' ', c.surname) AS customer_name,
+      SUM(s.quantity * s.unitprice * s.exchangerate) AS customer_revenue,
+      CASE 
+          WHEN SUM(s.quantity * s.unitprice * s.exchangerate) > 40000 THEN 'Gold'
+          WHEN SUM(s.quantity * s.unitprice * s.exchangerate) BETWEEN 20000 AND 39999 THEN 'Silver'
+          WHEN SUM(s.quantity * s.unitprice * s.exchangerate) BETWEEN 10000 AND 19999 THEN 'Bronze'
+          ELSE 'Normal'
+      END AS customer_seg,
+      c.continent,
+      c.countryfull AS country 
+  FROM Sales s  
+  JOIN Customer c ON s.customerkey = c.customerkey
+  GROUP BY 
+      s.customerkey, c.givenname, c.surname, c.continent, c.countryfull
+  HAVING SUM(s.quantity * s.unitprice * s.exchangerate) > 30000
+  ORDER BY customer_revenue DESC;
+

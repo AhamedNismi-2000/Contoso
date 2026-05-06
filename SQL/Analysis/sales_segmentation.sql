@@ -72,4 +72,4 @@
       WHERE s.orderdate BETWEEN '2022-01-01' AND '2024-12-31'
       GROUP BY 
          p.categoryname,revenue_tier
-      ORDER BY total_revenue   
+      ORDER BY category 
