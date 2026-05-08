@@ -73,3 +73,28 @@
       GROUP BY 
          p.categoryname,revenue_tier
       ORDER BY category 
+ 
+
+  -- Median Category Revenue 
+
+  WITH category_median AS (
+     SELECT 
+        p.categoryname AS caetegory,
+        PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY ROUND(s.quantity*s.unitprice*s.exchangerate ,2)) AS median 
+     FROM Sales s
+     JOIN Product p ON p.productkey = s.productkey
+     WHERE EXTRACT(YEAR FROM s.orderdate) > 2021
+     GROUP BY p.categoryname
+  )
+     SELECT
+         p.categoryname,
+         SUM(CASE WHEN (s.quantity*s.unitprice*s.exchangerate) < cm.median  AND EXTRACT(YEAR FROM s.orderdate)= 2022 THEN ROUND((s.quantity*s.unitprice*s.exchangerate),2)  END  ) AS low_2022_revenue, 
+         SUM(CASE WHEN (s.quantity*s.unitprice*s.exchangerate) > cm.median  AND EXTRACT(YEAR FROM s.orderdate)= 2022 THEN ROUND((s.quantity*s.unitprice*s.exchangerate),2)  END  ) AS high_2022_revenue,  
+         SUM(CASE WHEN (s.quantity*s.unitprice*s.exchangerate) < cm.median  AND EXTRACT(YEAR FROM s.orderdate)= 2023 THEN ROUND((s.quantity*s.unitprice*s.exchangerate),2)  END  ) AS low_2023_revenue,  
+         SUM(CASE WHEN (s.quantity*s.unitprice*s.exchangerate) > cm.median  AND EXTRACT(YEAR FROM s.orderdate)= 2023 THEN ROUND((s.quantity*s.unitprice*s.exchangerate),2)  END  ) AS high_2023_revenue,  
+         SUM(CASE WHEN (s.quantity*s.unitprice*s.exchangerate) < cm.median  AND EXTRACT(YEAR FROM s.orderdate)= 2024 THEN ROUND((s.quantity*s.unitprice*s.exchangerate),2)  END  ) AS low_2024_revenue,  
+         SUM(CASE WHEN (s.quantity*s.unitprice*s.exchangerate) > cm.median  AND EXTRACT(YEAR FROM s.orderdate)= 2024 THEN ROUND((s.quantity*s.unitprice*s.exchangerate),2)  END  ) AS high_2024_revenue  
+      FROM Sales s
+      JOIN Product p ON s.productkey = p.productkey  
+      CROSS JOIN category_median cm    
+      GROUP BY p.categoryname

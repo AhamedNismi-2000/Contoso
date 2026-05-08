@@ -175,3 +175,16 @@
   HAVING SUM(s.quantity * s.unitprice * s.exchangerate) > 30000
   ORDER BY customer_revenue DESC;
 
+  
+
+   SELECT 
+    s.customerkey ,
+    CONCAT(c.givenname , ' ', c.surname) AS customer_name,
+    ROUND (SUM (s.quantity*s.unitprice*s.exchangerate),2) AS revenue_by_customer,
+    p.categoryname AS category
+    FROM Sales s 
+    JOIN Customer c ON s.customerkey = c.customerkey
+    JOIN Product p  ON s.productkey  = p.productkey
+    WHERE  (s.quantity*s.unitprice*s.exchangerate) > 20000
+    GROUP BY s.customerkey ,c.givenname,c.surname , p.categoryname
+    ORDER BY revenue_by_customer DESC
