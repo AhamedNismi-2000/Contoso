@@ -98,3 +98,15 @@
       JOIN Product p ON s.productkey = p.productkey  
       CROSS JOIN category_median cm    
       GROUP BY p.categoryname
+
+
+   -- Average Delivery Processing Time For Each Year 
+
+     SELECT
+        DATE_PART('year' , s.orderdate) AS year,
+        ROUND(AVG(EXTRACT(DAY FROM AGE(s.deliverydate ,s.orderdate))),2) AS delivery_days, 
+        ROUND(SUM(s.quantity*s.unitprice*s.exchangerate),2) AS net_revenue
+     FROM Sales s   
+     WHERE DATE_PART('year' , s.orderdate) >= 2020
+     GROUP BY  year
+
