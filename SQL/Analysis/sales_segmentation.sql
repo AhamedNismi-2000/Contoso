@@ -111,16 +111,22 @@
      GROUP BY  year
 
   -- Daily Net Revnue 
-   WITH net_day AS (
-      SELECT 
+
+     SELECT 
          s.orderdate,
-         s.orderkey,
-         (s.quantity * s.unitprice * s.exchangerate)  net_revenue,
-         ROUND(SUM(s.quantity * s.unitprice * s.exchangerate) OVER(PARTITION BY s.orderdate),2) AS net_revenue_per_day
-      FROM Sales s  
-   )
-   SELECT 
-      orderdate,
-      SUM(net_revenue_per_day) AS revenue_per_day
-   FROM net_day
-   GROUP BY orderdate    
+         ROUND(SUM(s.quantity * s.unitprice * s.exchangerate),2) AS revenue_per_day
+     FROM Sales s  
+     GROUP BY s.orderdate
+     ORDER BY  revenue_per_day DESC
+
+-- Daily Revenue With Orderkey 
+
+    SELECT 
+        s.orderdate,
+        s.orderkey,
+        (s.quantity * s.unitprice * s.exchangerate)  net_revenue,
+        ROUND(SUM(s.quantity * s.unitprice * s.exchangerate) OVER(PARTITION BY s.orderdate),2) AS net_revenue_per_day
+   FROM Sales s  
+
+  
+   
