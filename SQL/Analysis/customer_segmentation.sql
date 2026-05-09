@@ -1,71 +1,68 @@
--- This Sql file Use For Customer Segmentation+
+-- This Sql file Use For Customer Segmentation 
 
 
--- Find the Unique Customer 
+-- Find the Unique Customers 
 
    SELECT 
        COUNT(DISTINCT customerkey) AS total_customer
    FROM Customer    
 
--- Customer Who Made a Order 
+-- Customers Who Made a Order 
 
    SELECT 
        COUNT(DISTINCT customerkey) AS total_active_customer
-   FROM Sales     
+   FROM Sales    
+   
+  
 
-
-   -- Find the Total  Customer By Year   Query By Rows 
-
+   -- Find the Total Active Male and Female Customers By Year 
 
     SELECT 
     EXTRACT(YEAR FROM s.orderdate) AS order_year,
-    COUNT(DISTINCT s.customerkey) AS ordered_customers
-   
+    COUNT(DISTINCT CASE WHEN gender='male' THEN  s.customerkey END  ) AS active_male_customer,
+    COUNT(DISTINCT CASE WHEN gender='female' THEN  s.customerkey END  ) AS active_female_customer,
+    COUNT(DISTINCT s.customerkey ) AS total_active_customer
     FROM Sales s
-    WHERE s.orderdate BETWEEN '2022-01-01' AND '2024-12-31'
+    JOIN Customer c 
+    ON s.customerkey = c.customerkey 
     GROUP BY EXTRACT(YEAR FROM s.orderdate)
-    ORDER BY order_year DESC
+    ORDER BY total_active_customer DESC
 
 
-
-
-   
--- Find the Unique Customer By Year 
+   -- Active & Inactive Customers Count By Continent 
 
    SELECT 
-      COUNT(DISTINCT CASE WHEN s.orderdate BETWEEN '2022-01-01' AND '2022-12-31' THEN c.customerkey END ) AS customer_2022,
-      COUNT(DISTINCT CASE WHEN s.orderdate BETWEEN '2023-01-01' AND '2023-12-31' THEN c.customerkey END ) AS customer_2023,
-      COUNT(DISTINCT CASE WHEN s.orderdate BETWEEN '2024-01-01' AND '2024-12-31' THEN c.customerkey END ) AS customer_2024 
-    FROM Sales s
-    JOIN Customer c
-    ON s.customerkey = c.customerkey
+    c.continent,
+    c.gender,
+    COUNT(DISTINCT s.customerkey) AS active_customer_by_continent,
 
+    COUNT(DISTINCT CASE WHEN s.customerkey IS NULL THEN c.customerkey 
+    END) AS inactive_custome_by_continent,
+    COUNT(DISTINCT c.customerkey) AS total_customer
+    FROM Customer c
+    LEFT JOIN Sales s 
+        ON c.customerkey = s.customerkey
+    GROUP BY c.continent, c.gender
+    ORDER BY c.gender
+ 
 
-
--- Customer By Continent Which Continent Customer Most 
-
-    SELECT 
-        continent,
-        COUNT(DISTINCT CASE WHEN Continent='Australia' THEN customerkey  
-              WHEN  Continent='Europe' THEN customerkey  
-              WHEN  Continent='North America' THEN customerkey END ) AS customer_continent 
-    FROM Customer 
-    GROUP BY continent 
-    ORDER BY continent 
-
-
-    SELECT 
+        
             
-   -- Top 5 High Customer Count Countries 
+   -- Top 5 High Active & Inactive  Customers Count Countries 
 
-    SELECT
-       countryfull,
-       continent, 
-       COUNT(DISTINCT customerkey) AS distinct_customer
-    FROM Customer 
-    GROUP BY countryfull,continent
+   SELECT
+        countryfull,
+        COUNT(DISTINCT s.customerkey)   AS active_customer_by_country,
+        COUNT(DISTINCT CASE WHEN s.customerkey IS NULL THEN c.customerkey END) AS total_inactive_customer_country,
+        COUNT(DISTINCT c.customerkey)   AS total_customer
+    FROM Customer c
+    LEFT JOIN Sales s ON c.customerkey = s.customerkey
+    GROUP BY countryfull
     ORDER BY countryfull DESC
     LIMIT 5 
+
+
+  
 
 
 -- Gender Analysis 
