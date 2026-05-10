@@ -85,24 +85,7 @@
   ON c.customerkey = s.customerkey
   GROUP BY gender    
 
-  -- Revenue By Each Gender Each Year 
-
-  SELECT 
-      c.gender,
-      EXTRACT(YEAR FROM s.orderdate) AS year,
-      ROUND(SUM(s.quantity * s.unitprice * s.exchangerate), 2) AS net_revenue,
-      COUNT(DISTINCT s.customerkey) AS customer_count 
-  FROM Sales s
-  JOIN Customer c 
-      ON s.customerkey = c.customerkey 
-  WHERE EXTRACT(YEAR FROM s.orderdate) > 2021
-  GROUP BY 
-      c.gender, EXTRACT(YEAR FROM s.orderdate)
-  ORDER BY 
-      c.gender, year;
-
-
-
+ 
 -- Which Gender Order What Category of Item
 
   SELECT 
