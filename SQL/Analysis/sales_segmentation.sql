@@ -143,4 +143,44 @@
       c.gender, EXTRACT(YEAR FROM s.orderdate)
   ORDER BY 
       c.gender, year;
+
+
+  -- Cohort Year By Customer   
+    
+  WITH yearly_cohort AS ( 
+   SELECT 
+      DISTINCT customerkey,
+      EXTRACT(YEAR FROM MIN(orderdate) OVER (PARTITION BY customerkey)) AS cohort_year
+   FROM Sales 
+   ORDER BY customerkey
    
+  )
+  SELECT 
+      c.cohort_year,
+      EXTRACT(YEAR FROM s.orderdate) AS purchase_year,
+      ROUND(SUM(s.quantity* s.unitprice *s.exchangerate),2) AS net_revenue 
+  FROM Sales s 
+  LEFT JOIN yearly_cohort yc 
+  ON s.customerkey = yc.customerkey
+  GROUP BY yc.cohort_year, EXTRACT(YEAR FROM s.orderdate)
+  ORDER BY yc.cohort_year 
+
+
+ -- Customer Count Each Cohort Year 
+
+   WITH  yearly_cohort  AS(
+      SELECT 
+         DISTINCT customerkey,
+         EXTRACT(YEAR FROM MIN(orderdate) OVER(PARTITION BY customerkey)) AS cohort_year,
+         EXTRACT(YEAR FROM orderdate) AS purchase_year
+      FROM Sales     
+   )
+   SELECT 
+      cohort_year,
+      purchase_year,
+      COUNT(*) AS customer_count
+   FROM yearly_cohort 
+   GROUP BY cohort_year,purchase_year
+   ORDER BY cohort_year   
+
+  
