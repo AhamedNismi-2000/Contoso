@@ -183,4 +183,24 @@
    GROUP BY cohort_year,purchase_year
    ORDER BY cohort_year   
 
-  
+
+-- Customer Life Time Value
+
+   WITH yearly_ltv AS (
+   SELECT 
+      s.customerkey,
+      c.surname , c.givenname,
+      EXTRACT(YEAR FROM MIN(orderdate)) AS cohort_year,
+      ROUND(SUM(s.quantity*s.unitprice*s.exchangerate),2) AS customer_ltv
+   FROM Sales s
+   JOIN Customer c
+   ON c.customerkey = s.customerkey 
+   GROUP BY s.customerkey,  c.surname , c.givenname 
+   )
+   SELECT 
+      *,
+      ROUND(AVG(customer_ltv) OVER(PARTITION BY customerkey),2) AS avg_ltv
+   FROM yearly_ltv 
+   ORDER BY customer_ltv DESC
+
+
